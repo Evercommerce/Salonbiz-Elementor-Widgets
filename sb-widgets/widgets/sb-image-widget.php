@@ -146,18 +146,26 @@ class SB_Image_Widget extends \Elementor\Widget_Base {
     $settings = $this->get_settings_for_display();
     $img_url =  $settings['image']['url'];?>
     
-    <div id="float-bg-img" class="svg-float-image fade-in">
-        <?php
-        
-           $file_content = file_get_contents($img_url);
-                    if (!empty($file_content)) {
-                        
-                        echo $file_content;
-                    }
+	<div id="float-bg-img" class="svg-float-image fade-in">
+			<?php
+			$img_url = $settings['image']['url'];
 
-        
-        ?>
-    </div>
+			// Set a user agent to mimic a web browser.
+			$context = stream_context_create([
+				'http' => [
+					'header' => 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
+				],
+			]);
+
+			$file_content = @file_get_contents($img_url, false, $context);
+
+			if ($file_content !== false) {
+				echo $file_content;
+			} else {
+//				echo "Failed to retrieve the SVG image.";
+			}
+			?>
+        </div>
     <?php
 
 	}
